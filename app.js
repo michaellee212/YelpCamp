@@ -3,28 +3,16 @@ const mongoose = require('mongoose');
 const bodyParser = require("body-parser");
 var app = express();
 var Campground = require("./models/campground");
-// var Comment = require("./models/comment");
+var seedDB = require("./seeds");
+var Comment = require("./models/comment");
 // var User = require("./models/user");
 const port = 3000;
 
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+seedDB();
 
-
-// Campground.create({ 
-//     name: "Goat Ranch", 
-//     image: "https://pixabay.com/get/54e6dc414a57a414f6da8c7dda793f7f1636dfe2564c704c732b7ed19744c35f_340.jpg",
-//     description: "Wonderful place to stay, lots of goats everywhere"
-
-// }, (err, campground) =>{
-//     if(err){
-//         console.log(err);
-//     }else{
-//         console.log("Newly made campground: ");
-//         console.log(campground);
-//     }
-// });
 
 // var campgrounds = [
 //     {name: "Bear Creek", image: "https://pixabay.com/get/57e0d6424954ac14f6da8c7dda793f7f1636dfe2564c704c732b7dd7914ac65e_340.jpg"},
@@ -50,7 +38,7 @@ app.get("/campgrounds", (req, res) => {
         if(err){
             console.log(err);
         }else{
-            res.render("index", {campgrounds: allCampgrounds});
+            res.render("campgrounds/index", {campgrounds: allCampgrounds});
         }
     });
 });
@@ -76,22 +64,61 @@ app.post("/campgrounds", (req, res) => {
 
 // NEW - Show form to create new campground
 app.get("/campgrounds/new", (req, res) => {
-    res.render("new");
+    res.render("campgrounds/new");
 });
 
 
 // SHOW - Shows more info about one campground
 app.get("/campgrounds/:id", (req, res) => {
     // Find campground with provided ID
-    Campground.findById(req.params.id, (err, foundCampground) => {
+    Campground.findById(req.params.id).populate("comments").exec(function(err, foundCampground) {
         if(err){
             console.log(err);
         }else{
+            console.log(foundCampground);
             //render show template with that campground
-            res.render("show", {campground: foundCampground});
+            res.render("campgrounds/show", {campground: foundCampground});
         }
     });
 });
+
+
+// COMMENTS ROUTES
+// =====================
+app.get("/campgrounds/:id/comments/new", (req, res) =>{
+    // find campground by id
+    Campground.findById(req.params.id, (err, campground) =>{
+        if(err){
+            console.log(err);
+        }else{
+            res.render("comments/new", {campground: campground});
+        }
+    })
+})
+
+app.post("/campgrounds/:id/comments", (req, res) =>{
+    // lookup campground usisng ID
+    Campground.findById(req.params.id, (err, campground) =>{
+        if(err){
+            console.log(err);
+            res.redirect("/campgrounds");
+        }else{
+            Comment.create(req.body.comment, (err, comment) =>{
+                if(err){
+                    console.log(err);
+                }else{
+                    campground.comments.push(comment);
+                    campground.save();
+                    res.redirect("/campgrounds/" + campground._id);
+                }
+            })
+        }
+    })
+    // create new comment
+    // connect new comment to campground
+    // redirect campground show page
+})
+
 
 // Express listens for requests (Start server)
 app.listen(port, () => console.log(`YelpCAmp starting on port ${port}!`))
