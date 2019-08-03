@@ -3,9 +3,12 @@ const mongoose = require('mongoose');
 const bodyParser = require("body-parser");
 var app = express();
 var Campground = require("./models/campground");
+var passport = require("passport");
+var LocalStrategy = require("passport-local");
+var passportLocalMongoose = require("passport-local-mongoose");
 var seedDB = require("./seeds");
 var Comment = require("./models/comment");
-// var User = require("./models/user");
+var User = require("./models/user");
 const port = 3000;
 
 mongoose.connect("mongodb://localhost:27017/yelp_camp", {useNewUrlParser: true});
@@ -13,6 +16,21 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 seedDB();
+
+// PASSPORT CONFIG
+app.use(require("express-session")({
+    secret: "Miguel's Secret",
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// passport-local-mongoose config
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 
 // var campgrounds = [
@@ -23,6 +41,11 @@ seedDB();
 //     {name: "Mook River", image: "https://pixabay.com/get/54e2d6424a54ab14f6da8c7dda793f7f1636dfe2564c704c732b7dd7914bc258_340.jpg"},
 //     {name: "Sunset Rest", image: "https://pixabay.com/get/57e4d64a4a54ad14f6da8c7dda793f7f1636dfe2564c704c732b7dd4974bc15a_340.jpg"}
 // ]
+
+app.use((req, res, next) =>{
+    res.locals.currentUser = req.user;
+    next();
+});
 
 app.get("/", (req, res) => {
     res.send("Homepage");
@@ -39,7 +62,7 @@ app.get("/campgrounds", (req, res) => {
         if(err){
             console.log(err);
         }else{
-            res.render("campgrounds/index", {campgrounds: allCampgrounds});
+            res.render("campgrounds/index", {campgrounds: allCampgrounds, currentUser: req.user});
         }
     });
 });
@@ -86,7 +109,7 @@ app.get("/campgrounds/:id", (req, res) => {
 
 // COMMENTS ROUTES
 // =====================
-app.get("/campgrounds/:id/comments/new", (req, res) =>{
+app.get("/campgrounds/:id/comments/new", isLoggedIn, (req, res) =>{
     // find campground by id
     Campground.findById(req.params.id, (err, campground) =>{
         if(err){
@@ -97,7 +120,7 @@ app.get("/campgrounds/:id/comments/new", (req, res) =>{
     })
 })
 
-app.post("/campgrounds/:id/comments", (req, res) =>{
+app.post("/campgrounds/:id/comments", isLoggedIn, (req, res) =>{
     // lookup campground usisng ID
     Campground.findById(req.params.id, (err, campground) =>{
         if(err){
@@ -119,6 +142,62 @@ app.post("/campgrounds/:id/comments", (req, res) =>{
     // connect new comment to campground
     // redirect campground show page
 })
+
+
+// AUTH ROUTES
+// ==============
+
+// REGISTER ROUTE - shows register form
+app.get("/register", (req, res) =>{
+    res.render("register");
+})
+
+// handles user sign up
+app.post("/register", (req, res) =>{
+    var newUser = new User({username: req.body.username});
+    User.register(newUser, req.body.password, (err, user) =>{
+        if(err){
+            console.log(err);
+            return res.render('register');
+        }
+        passport.authenticate("local")(req, res, function(){
+            res.redirect("/campgrounds");
+        });
+    });
+});
+
+// LOGIN ROUTES
+// show login form
+app.get("/login", (req, res) => {
+    res.render("login"); 
+ });
+
+// app.post("/login", 'middleware', 'callback')
+// login logic - middleware
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/campgrounds",
+    failureRedirect: "/login"
+}) ,
+// callback
+    (req, res) => {
+});
+
+// LOGOUT ROUTE
+app.get("/logout", (req, res) =>{
+    req.logout();
+    res.redirect("/landing");
+})
+
+
+// Check if the user is logged in
+function isLoggedIn(req, res, next) {
+    if(req.isAuthenticated()){
+        return next();
+    }
+    // if not logged in, redirect to login page
+    res.redirect("/login");
+}
+
 
 
 // Express listens for requests (Start server)
