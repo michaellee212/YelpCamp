@@ -75,6 +75,7 @@ router.get('/forgot', function (req, res) {
     res.render('forgot');
 });
 
+// Creates token to reset password
 router.post('/forgot', function (req, res, next) {
     async.waterfall([
         function (done) {
@@ -100,6 +101,8 @@ router.post('/forgot', function (req, res, next) {
                 });
             });
         },
+
+        // Email alert to reset password
         function (token, user, done) {
             var smtpTransport = nodemailer.createTransport({
                 service: 'Gmail',
@@ -129,6 +132,7 @@ router.post('/forgot', function (req, res, next) {
     });
 });
 
+// 
 router.get('/reset/:token', function (req, res) {
     User.findOne({
         resetPasswordToken: req.params.token,
@@ -146,6 +150,7 @@ router.get('/reset/:token', function (req, res) {
     });
 });
 
+// Reset password after given token
 router.post('/reset/:token', function (req, res) {
     async.waterfall([
         function (done) {
