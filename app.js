@@ -20,6 +20,7 @@ const port = 3000;
 
 // Requiring ROUTES
 var commentRoutes = require("./routes/comments");
+var reviewRoutes = require("./routes/reviews");
 var campgroundRoutes = require("./routes/campgrounds");
 var indexRoutes = require("./routes/index");
 
@@ -63,6 +64,7 @@ app.use((req, res, next) => {
 
 app.use("/", indexRoutes);
 app.use("/campgrounds", campgroundRoutes);
+app.use("/campgrounds/:id/reviews", reviewRoutes);
 app.use("/campgrounds/:id/comments", commentRoutes);
 
 
