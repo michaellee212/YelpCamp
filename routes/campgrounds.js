@@ -21,7 +21,7 @@ router.get("/", function (req, res) {
                 name: regex
             }).exec(function (err, count) {
                 if (err) {
-                    console.log(err);
+                    req.flash("error", err.message);
                     res.redirect("back");
                 } else {
                     // If fuzzy search not found
@@ -79,7 +79,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
     // Create a new campground and save to DB
     Campground.create(newCampground, (err, createdCampground) => {
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
         } else {
             // Redirect back to list of campgrounds
             res.redirect("/campgrounds");
@@ -132,18 +132,10 @@ router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
 router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
     // Removes any script tags in the body
     // req.body.campground.body = req.sanitize(req.body.campground.body);
-    // Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCampground) => {
-    //     if (err) {
-    //         res.redirect("/campgrounds")
-    //         console.log(err);
-    //     } else {
-    //         res.redirect("/campgrounds/" + req.params.id);
-    //     }
-    // })
     Campground.findById(req.params.id, function (err, campground) {
         delete req.body.campground.rating;
         if (err) {
-            console.log(err);
+            req.flash("error", err.message);
             res.redirect("/campgrounds");
         } else {
             campground.name = req.body.campground.name;
@@ -151,7 +143,7 @@ router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
             campground.image = req.body.campground.image;
             campground.save(function (err) {
                 if (err) {
-                    console.log(err);
+                    req.flash("error", err.message);
                     res.redirect("/campgrounds");
                 } else {
                     res.redirect("/campgrounds/" + campground._id);
@@ -161,20 +153,7 @@ router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
     });
 });
 
-
 // DESTROY CAMPGROUND ROUTE
-// router.delete("/:id", middleware.checkCampgroundOwnership, (req, res) => {
-//     Campground.findByIdAndRemove(req.params.id, (err) => {
-//         if (err) {
-//             res.redirect("/campgrounds");
-//             console.log(err);
-//         } else {
-//             req.flash("success", "Campground deleted");
-//             res.redirect("/campgrounds");
-//         }
-//     })
-// });
-
 router.delete("/:id", middleware.checkCampgroundOwnership, function (req, res) {
     Campground.findById(req.params.id, function (err, campground) {
         if (err) {
@@ -187,7 +166,7 @@ router.delete("/:id", middleware.checkCampgroundOwnership, function (req, res) {
                 }
             }, function (err) {
                 if (err) {
-                    console.log(err);
+                    req.flash("error", err.message);
                     return res.redirect("/campgrounds");
                 }
                 // deletes all reviews associated with the campground
@@ -197,7 +176,7 @@ router.delete("/:id", middleware.checkCampgroundOwnership, function (req, res) {
                     }
                 }, function (err) {
                     if (err) {
-                        console.log(err);
+                        req.flash("error", err.message);
                         return res.redirect("/campgrounds");
                     }
                     //  delete the campground
@@ -233,7 +212,7 @@ router.post("/:id/like", middleware.isLoggedIn, function (req, res) {
 
         foundCampground.save(function (err) {
             if (err) {
-                console.log(err);
+                req.flash("error", err.message);
                 return res.redirect("/campgrounds");
             }
             return res.redirect("/campgrounds/" + foundCampground._id);

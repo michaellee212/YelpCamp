@@ -31,6 +31,7 @@ middlewareObj.checkCommentOwnership = function (req, res, next) {
     if (req.isAuthenticated()) {
         Comment.findById(req.params.comment_id, function (err, foundComment) {
             if (err || !foundComment) {
+                req.flash("error", "Comment not found");
                 res.redirect("back");
             } else {
                 // does user own the comment?
@@ -52,6 +53,7 @@ middlewareObj.checkReviewOwnership = function (req, res, next) {
     if (req.isAuthenticated()) {
         Review.findById(req.params.review_id, function (err, foundReview) {
             if (err || !foundReview) {
+                req.flash("error", err.message);
                 res.redirect("back");
             } else {
                 // does user own the comment?
