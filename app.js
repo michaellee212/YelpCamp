@@ -28,7 +28,7 @@ var indexRoutes = require("./routes/index");
 //     useNewUrlParser: true
 // });
 
-mongoose.connect("mongodb+srv://michaelee212:<password>@yelpcamp-lek7r.mongodb.net/test?retryWrites=true&w=majority");
+mongoose.connect("mongodb+srv://michaelee212:FVZoWqiy7PctpX4e@yelpcamp-lek7r.mongodb.net/test?retryWrites=true&w=majority");
 
 
 app.set("view engine", "ejs");
