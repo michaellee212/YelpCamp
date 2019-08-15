@@ -24,23 +24,20 @@ var commentRoutes = require("./routes/comments");
 var campgroundRoutes = require("./routes/campgrounds");
 var indexRoutes = require("./routes/index");
 
-
-// mongoose.connect("mongodb://localhost:27017/yelp_camp", {
-//     useNewUrlParser: true
-// });
-
-// mongoose.connect("mongodb+srv://michaelee212:Syxz7Cig47FF0guG@cluster0-lek7r.mongodb.net/test?retryWrites=true&w=majority", {
-//     useNewUrlParser: true
-// });
-
-mongoose.connect('mongodb+srv://michaelee212:fRIxj2c8oi2CAAHc@cluster0-lek7r.mongodb.net/test?retryWrites=true&w=majority', {
-    useNewUrlParser: true,
-    useCreateIndex: true
-}).then(() => {
-    console.log('Connected to DB!');
-}).catch(err => {
-    console.log('ERROR:', err.message);
+// LOCAL SETUP
+mongoose.connect("mongodb://localhost:27017/yelp_camp", {
+    useNewUrlParser: true
 });
+
+// // HEROKU SETUP
+// mongoose.connect('mongodb+srv://michaelee212:fRIxj2c8oi2CAAHc@cluster0-lek7r.mongodb.net/test?retryWrites=true&w=majority', {
+//     useNewUrlParser: true,
+//     useCreateIndex: true
+// }).then(() => {
+//     console.log('Connected to DB!');
+// }).catch(err => {
+//     console.log('ERROR:', err.message);
+// });
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({
