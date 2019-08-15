@@ -28,7 +28,9 @@ var indexRoutes = require("./routes/index");
 //     useNewUrlParser: true
 // });
 
-mongoose.connect("mongodb+srv://michaelee212:Syxz7Cig47FF0guG@cluster0-lek7r.mongodb.net/test?retryWrites=true&w=majority")
+mongoose.connect("mongodb+srv://michaelee212:Syxz7Cig47FF0guG@cluster0-lek7r.mongodb.net/test?retryWrites=true&w=majority", {
+    useNewUrlParser: true
+});
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({
