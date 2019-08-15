@@ -13,7 +13,6 @@ var methodOverride = require("method-override");
 var flash = require("connect-flash");
 
 const port = process.env.PORT || 3000;
-const ip = process.env.IP || "127.0.0.1";
 
 // Removes any script tags in the body
 // const expressSanitizer = require('express-sanitizer');
@@ -34,7 +33,7 @@ var indexRoutes = require("./routes/index");
 //     useNewUrlParser: true
 // });
 
-mongoose.connect('mongodb+srv://michaelee212:Syxz7Cig47FF0guG@cluster0-lek7r.mongodb.net/test?retryWrites=true&w=majority', {
+mongoose.connect('mongodb+srv://michaelee212:fRIxj2c8oi2CAAHc@cluster0-lek7r.mongodb.net/test?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useCreateIndex: true
 }).then(() => {
