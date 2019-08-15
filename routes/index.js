@@ -57,8 +57,7 @@ router.get("/login", (req, res) => {
 // login logic - middleware
 router.post("/login", passport.authenticate("local", {
         successRedirect: "/campgrounds",
-        failureRedirect: "/login",
-        failureFlash: true
+        failureRedirect: "/login"
     }),
     // callback
     (req, res) => {});
