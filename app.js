@@ -11,7 +11,9 @@ var Comment = require("./models/comment");
 var User = require("./models/user");
 var methodOverride = require("method-override");
 var flash = require("connect-flash");
-const port = 3000;
+
+const port = process.env.PORT || 3000;
+const ip = process.env.IP || "127.0.0.1";
 
 // Removes any script tags in the body
 // const expressSanitizer = require('express-sanitizer');
