@@ -1,4 +1,5 @@
 # YelpCamp
+A responsive RESTful API made with Express.js and MongoDB.
  
 ## Built with
 Javascript, HTML, CSS, Node.js, Express.js, Mongoose.js, and MongoDB.
