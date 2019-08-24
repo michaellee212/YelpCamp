@@ -3,7 +3,7 @@ A responsive RESTful API made with Express.js and MongoDB.
 
 https://michael-lee-yelpcamp.herokuapp.com/
 
-Demo Account: 
+Demo Account:
 Username: guest 
 Password: guest
  
