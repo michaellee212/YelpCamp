@@ -12,21 +12,3 @@ Javascript, HTML, CSS, Node.js, Express.js, Mongoose.js, and MongoDB.
 * Uses momentJS to show post and comment creation and update timestamps. 
 * Forgot password function sends an email to reset user's password.
 * Users can view their profile, showcasing their information and listings. 
-
-## Dependencies
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
